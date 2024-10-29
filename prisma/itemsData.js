@@ -71,6 +71,9 @@ const itemsData = [
 //simple add not upsert
 export async function addItems(itemsData) {
     try {
+      if (!Array.isArray(itemsData)) {
+        itemsData = [itemsData]; // Wrap the single item in an array
+    }
         // Create items one by one to get their IDs
         for (const item of itemsData) {
             const createdItem = await prisma.item.create({

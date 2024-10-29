@@ -1,5 +1,6 @@
 import { Router } from "express";
 import getItems from "../../prisma/itemsData.js";
+import { addItems } from "../../prisma/itemsData.js";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -55,6 +56,17 @@ router.get("/items/:id", async (req, res)=> {
     } catch (error) {
         console.log("Error fetching items", error);
         res.status(500).json({ error: "Failed to fetch item" });
+    }
+});
+
+router.post('/addItems', async (req, res) => {
+    try {
+        const newItems = req.body; 
+        const result = await addItems(newItems); 
+        res.status(201).json(result);
+    } catch (error) {
+        console.error("Error adding item:", error);
+        res.status(500).json({ error: 'Failed to add item' });
     }
 });
 
