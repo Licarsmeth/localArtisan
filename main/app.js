@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use("/auth", authRoute);
 app.use("/admin", adminRoute);
-app.use("/", itemRoute);
+app.use("/product", itemRoute);
 app.use("/users", userRoute);
 
 app.get("/", (req, res) => res.render("index", { user: req.user, req: req }));
