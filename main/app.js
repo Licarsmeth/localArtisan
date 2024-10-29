@@ -5,11 +5,13 @@ import authorize from "./rbac.js";
 import authRoute from "./routes/authRoute.js";
 import adminRoute from "./routes/adminRoute.js";
 import itemRoute from "./routes/itemRoute.js"
+import cors from "cors";
 const PORT = 5173;
 
 const app = express();
 app.set("view engine", "ejs");
 
+app.use(cors());
 app.use(session({ secret: "cats", resave: false, saveUninitialized: false }));
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
