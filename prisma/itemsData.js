@@ -69,7 +69,7 @@ const itemsData = [
 ];
 
 //simple add not upsert
-async function insertItems(itemsData) {
+export async function addItems(itemsData) {
     try {
         // Create items one by one to get their IDs
         for (const item of itemsData) {
