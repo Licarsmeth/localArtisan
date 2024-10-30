@@ -103,7 +103,7 @@ export async function addItems(itemsData) {
 }
 
 //new value of a field in the item of given id
-async function updateItem(id, field, value) {
+export async function updateItem(id, field, value) {
   try {
     // Check if the item exists
     const existingItem = await prisma.item.findUnique({
@@ -131,7 +131,7 @@ async function updateItem(id, field, value) {
   }
 }
 
-async function updateItemPhotos(itemId, newPhotoUrls) {
+export async function updateItemPhotos(itemId, newPhotoUrls) {
   try {
       const existingItem = await prisma.item.findUnique({
           where: { id: itemId },
