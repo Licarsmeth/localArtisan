@@ -3,6 +3,7 @@ import getItems from "../../prisma/itemsData.js";
 import { addItems } from "../../prisma/itemsData.js";
 import { updateItem } from "../../prisma/itemsData.js";
 import { updateItemPhotos } from "../../prisma/itemsData.js";
+import authorize from "../rbac.js";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -61,7 +62,7 @@ router.get("/items/:id", async (req, res)=> {
     }
 });
 
-router.post('/addItems', async (req, res) => {
+router.post('/addItems',authorize(['post_item']), async (req, res) => {
     try {
         const newItems = req.body; 
         const result = await addItems(newItems); 
@@ -72,7 +73,7 @@ router.post('/addItems', async (req, res) => {
     }
 });
 
-router.put('/items/:id', async (req, res) => {
+router.put('/items/:id',authorize(['post_item']), async (req, res) => {
     const itemId = parseInt(req.params.id); 
     const { field, value, photos } = req.body; 
 

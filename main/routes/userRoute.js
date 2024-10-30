@@ -1,8 +1,9 @@
 import { Router } from "express";
+import authorize from "../rbac.js";
 import getUsers from "../../prisma/usersData.js";
 const router = Router();
 
-router.get("/allUsers", async (req, res)=> {
+router.get("/allUsers",authorize(['see_item', 'warn']), async (req, res)=> {
     try {
         const users = await getUsers();
         res.json(users);
