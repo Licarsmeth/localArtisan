@@ -163,6 +163,7 @@ async function clearCart(userId) {
   return { message: "Cart has been cleared." };
 }
 
+//again, doesn't delete the cart.
 async function removeFromCart(userId, productId) {
   const cart = await prisma.cart.findUnique({
     where: { userId: userId },
@@ -178,6 +179,12 @@ async function removeFromCart(userId, productId) {
   if (!existingProduct) {
     throw new Error("Product not found in cart.");
   }
+
+  // Increase stock before removing from cart
+  await prisma.item.update({
+    where: { id: productId },
+    data: { inStock: { increment: existingProduct.quantity } } // Restore stock
+});
 
   await prisma.cartProduct.delete({
     where: { id: existingProduct.id },
@@ -209,5 +216,5 @@ async function getTotalPrice(userId) {
   return { totalPrice };
 }
 
-addToCart(1,1,5);
+
 
