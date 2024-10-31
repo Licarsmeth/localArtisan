@@ -66,28 +66,30 @@ await prisma.item.update({
 }
 
 async function checkoutCart(userId) {
-  const cart = await prisma.cart.findUnique({
-    where: { userId: userId },
-    include: { products: true },
-  });
+    const cart = await prisma.cart.findUnique({
+        where: { userId: userId },
+        include: { products: true }
+    });
 
-  if (!cart || cart.products.length === 0) {
-    throw new Error("Cart is empty or does not exist.");
-  }
+    if (!cart || cart.products.length === 0) {
+        throw new Error("Cart is empty or does not exist.");
+    }
 
-  // Process payment and create order logic here...
-  //jastai processPayment(cart);
+    // Process payment and create order logic here...
+    // jastai
+    // const order = await processPayment(cart);
 
-  await prisma.cartProduct.deleteMany({
-    where: { cartId: cart.id },
-  });
+    await prisma.cartProduct.deleteMany({
+        where: { cartId: cart.id }
+    });
 
-  await prisma.cart.delete({
-    where: { id: cart.id },
-  });
+    await prisma.cart.delete({
+        where: { id: cart.id }
+    });
 
-  return { message: "Checkout successful. Your cart has been cleared." };
+    return { message: "Checkout successful. Your cart has been cleared." };
 }
+
 
 async function modifyCart(userId, productId, newQuantity) {
     const cart = await prisma.cart.findUnique({
@@ -151,7 +153,6 @@ async function modifyCart(userId, productId, newQuantity) {
      }
 }
 
-
 async function viewCart(userId) {
   const cart = await prisma.cart.findUnique({
     where: { userId: userId },
@@ -175,7 +176,6 @@ async function viewCart(userId) {
     price: item.product.price,
   }));
 
-  console.log(items);
   return items;
 }
 
