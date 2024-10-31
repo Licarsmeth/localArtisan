@@ -90,34 +90,67 @@ async function checkoutCart(userId) {
 }
 
 async function modifyCart(userId, productId, newQuantity) {
-  const cart = await prisma.cart.findUnique({
-    where: { userId: userId },
-    include: { products: true },
-  });
-
-  if (!cart) {
-    throw new Error("Cart does not exist.");
-  }
-
-  const existingProduct = cart.products.find((p) => p.productId === productId);
-
-  if (!existingProduct) {
-    throw new Error("Product not found in cart.");
-  }
-
-  if (newQuantity <= 0) {
-    // Remove item from cart
-    await prisma.cartProduct.delete({
-      where: { id: existingProduct.id },
+    const cart = await prisma.cart.findUnique({
+        where: { userId: userId },
+        include: { products: true }
     });
-  } else {
-    // Update quantity
-    await prisma.cartProduct.update({
-      where: { id: existingProduct.id },
-      data: { quantity: newQuantity },
-    });
-  }
+
+    if (!cart) {
+        throw new Error("Cart does not exist.");
+    }
+
+    const existingProduct = cart.products.find(p => p.productId === productId);
+
+    if (!existingProduct) {
+        throw new Error("Product not found in cart.");
+    }
+
+    // Determine the difference in quantity
+    const currentQuantity = existingProduct.quantity;
+    
+    if (newQuantity > currentQuantity) {
+        const additionalQuantity = newQuantity - currentQuantity;
+
+        // Check if there's enough stock before updating
+        const item = await prisma.item.findUnique({ where: { id: productId } });
+        
+        if (item.inStock < additionalQuantity) {
+            throw new Error("Not enough stock available.");
+        }
+
+        // Update stock for additional items being added to the cart
+        await prisma.item.update({
+            where: { id: productId },
+            data: { inStock: item.inStock - additionalQuantity }
+        });
+        
+        // Update quantity in the cart
+        await prisma.cartProduct.update({
+            where: { id: existingProduct.id },
+            data: { quantity: newQuantity }
+        });
+        
+    } else if (newQuantity < currentQuantity) {
+        const removedQuantity = currentQuantity - newQuantity;
+
+        // Restore stock for removed items
+        await prisma.item.update({
+            where: { id: productId },
+            data: { inStock: { increment: removedQuantity } } // Increase stock
+        });
+
+        // Update quantity in the cart
+        await prisma.cartProduct.update({
+            where: { id: existingProduct.id },
+            data: { quantity: newQuantity }
+        });
+        
+    } else {
+         // If quantities are equal, do nothing.
+         return;
+     }
 }
+
 
 async function viewCart(userId) {
   const cart = await prisma.cart.findUnique({
@@ -215,6 +248,3 @@ async function getTotalPrice(userId) {
   console.log(totalPrice);
   return { totalPrice };
 }
-
-
-
