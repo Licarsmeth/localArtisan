@@ -25,6 +25,8 @@ model User {
   Comment          Comment[]
   sentMessages     Message[]  @relation("Sender")
   receivedMessages Message[]  @relation("Receiver")
+  cart             Cart?
+  wishlists        Wishlist[]
 }
 
 model Seller {
@@ -62,20 +64,22 @@ model Admin {
 }
 
 model Item {
-  id          Int       @id @default(autoincrement())
-  title       String
-  description String
-  price       Float
-  rating      Float?
-  photos      Photo[]
-  category    String
-  inStock     Int
-  sellerId    Int?
-  adminId     Int?
-  seller      Seller?   @relation(fields: [sellerId], references: [id])
-  admin       Admin?    @relation(fields: [adminId], references: [id])
-  Rating      Rating[]
-  Comment     Comment[]
+  id              Int               @id @default(autoincrement())
+  title           String
+  description     String
+  price           Float
+  rating          Float?
+  photos          Photo[]
+  category        String
+  inStock         Int
+  sellerId        Int?
+  adminId         Int?
+  seller          Seller?           @relation(fields: [sellerId], references: [id])
+  admin           Admin?            @relation(fields: [adminId], references: [id])
+  Rating          Rating[]
+  Comment         Comment[]
+  CartProduct     CartProduct[]
+  WishlistProduct WishlistProduct[]
 }
 
 model Rating {
@@ -107,7 +111,40 @@ model Message {
 
 model Photo {
   id     Int    @id @default(autoincrement())
-  url    String 
-  itemId Int    
-  item   Item   @relation(fields: [itemId], references: [id]) 
+  url    String
+  itemId Int
+  item   Item   @relation(fields: [itemId], references: [id])
+}
+
+model Cart {
+  id       Int           @id @default(autoincrement())
+  userId   Int           @unique
+  date     DateTime      @default(now())
+  products CartProduct[]
+  user     User          @relation(fields: [userId], references: [id])
+}
+
+model CartProduct {
+  id        Int  @id @default(autoincrement())
+  cartId    Int
+  productId Int
+  quantity  Int
+  cart      Cart @relation(fields: [cartId], references: [id])
+  product   Item @relation(fields: [productId], references: [id])
+}
+
+model Wishlist {
+  id       Int               @id @default(autoincrement())
+  userId   Int
+  date     DateTime          @default(now())
+  products WishlistProduct[]
+  user     User              @relation(fields: [userId], references: [id])
+}
+
+model WishlistProduct {
+  id         Int      @id @default(autoincrement())
+  wishlistId Int
+  productId  Int
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id])
+  product    Item     @relation(fields: [productId], references: [id])
 }
