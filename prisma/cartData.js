@@ -246,4 +246,3 @@ export async function getTotalPrice(userId) {
   console.log(totalPrice);
   return { totalPrice };
 }
-clearCart(1);
