@@ -1,9 +1,8 @@
 import { PrismaClient } from "@prisma/client";
-import { clear } from "console";
 
 const prisma = new PrismaClient();
 
-async function addToCart(userId, productId, quantity) {
+export async function addToCart(userId, productId, quantity) {
   const item = await prisma.item.findUnique({
     where: { id: productId },
   });
@@ -65,7 +64,7 @@ await prisma.item.update({
 });
 }
 
-async function checkoutCart(userId) {
+export async function checkoutCart(userId) {
     const cart = await prisma.cart.findUnique({
         where: { userId: userId },
         include: { products: true }
@@ -91,7 +90,7 @@ async function checkoutCart(userId) {
 }
 
 
-async function modifyCart(userId, productId, newQuantity) {
+export async function modifyCart(userId, productId, newQuantity) {
     const cart = await prisma.cart.findUnique({
         where: { userId: userId },
         include: { products: true }
@@ -153,7 +152,7 @@ async function modifyCart(userId, productId, newQuantity) {
      }
 }
 
-async function viewCart(userId) {
+export async function viewCart(userId) {
   const cart = await prisma.cart.findUnique({
     where: { userId: userId },
     include: {
@@ -175,12 +174,11 @@ async function viewCart(userId) {
     title: item.product.title,
     price: item.product.price,
   }));
-
   return items;
 }
 
 //unlike checkoutCart, doesn't delete the cart itself. Just cleans it up.
-async function clearCart(userId) {
+export async function clearCart(userId) {
   const cart = await prisma.cart.findUnique({
     where: { userId: userId },
   });
@@ -197,7 +195,7 @@ async function clearCart(userId) {
 }
 
 //again, doesn't delete the cart.
-async function removeFromCart(userId, productId) {
+export async function removeFromCart(userId, productId) {
   const cart = await prisma.cart.findUnique({
     where: { userId: userId },
     include: { products: true },
@@ -226,7 +224,7 @@ async function removeFromCart(userId, productId) {
   return { message: "Product removed from cart." };
 }
 
-async function getTotalPrice(userId) {
+export async function getTotalPrice(userId) {
   const cart = await prisma.cart.findUnique({
     where: { userId: userId },
     include: {
@@ -248,3 +246,4 @@ async function getTotalPrice(userId) {
   console.log(totalPrice);
   return { totalPrice };
 }
+clearCart(1);

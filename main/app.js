@@ -5,6 +5,7 @@ import authorize from "./rbac.js";
 import authRoute from "./routes/authRoute.js";
 import itemRoute from "./routes/itemRoute.js";
 import userRoute from "./routes/userRoute.js";
+import cartRoute from "./routes/cartRoute.js";
 import cors from "cors";
 const PORT = 5173;
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/auth", authRoute);
 app.use("/product", itemRoute);
 app.use("/users", userRoute);
+app.use ("/cart", cartRoute);
 
 app.get("/", (req, res) => res.render("index", { user: req.user, req: req }));
 app.get("/books", authorize(['see_item', 'warn']), (req,res)=> res.json({name:'harry potter'}));
