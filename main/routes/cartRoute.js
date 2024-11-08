@@ -35,7 +35,6 @@ router.post('/add', async (req, res) => {
   //view?userId = 123
   router.get('/view', async (req, res) => {
     const  userId  = parseInt(req.query.userId); 
-    console.log(userId);
     try {
       const result = await viewCart(userId);
       res.status(200).json(result);
