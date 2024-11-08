@@ -183,5 +183,4 @@ async function getItems(){
     await prisma.$disconnect();
 }
 }
-
 export default getItems;
