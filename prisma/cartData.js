@@ -181,17 +181,31 @@ export async function viewCart(userId) {
 export async function clearCart(userId) {
   const cart = await prisma.cart.findUnique({
     where: { userId: userId },
+    include: { products: true },
   });
 
   if (!cart) {
     throw new Error("Cart does not exist.");
   }
 
-  await prisma.cartProduct.deleteMany({
-    where: { cartId: cart.id },
+  // Start a transaction to ensure atomicity
+  await prisma.$transaction(async (prisma) => {
+    for (const cartProduct of cart.products) {
+      const productId = cartProduct.productId;
+      const quantity = cartProduct.quantity;
+
+      await prisma.item.update({
+        where: { id: productId },
+        data: { inStock: { increment: quantity } }
+      });
+    }
+
+    await prisma.cartProduct.deleteMany({
+      where: { cartId: cart.id },
+    });
   });
 
-  return { message: "Cart has been cleared." };
+  return { message: "Cart has been cleared and stock updated." };
 }
 
 //again, doesn't delete the cart.
