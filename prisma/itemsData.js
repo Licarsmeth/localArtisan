@@ -27,7 +27,7 @@ const itemsData = [
   },
   {
     id: 3,
-    title: "dhaka topi",
+    title: "dinesh ko item",
     description: "Reflects the culture of Nepal.",
     price: 29.99,
     rating: 4.7,
