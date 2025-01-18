@@ -1,5 +1,4 @@
 import { Router } from "express";
-import getItems from "../../prisma/itemsData.js";
 import { addItems } from "../../prisma/itemsData.js";
 import { updateItem } from "../../prisma/itemsData.js";
 import { updateItemPhotos } from "../../prisma/itemsData.js";
