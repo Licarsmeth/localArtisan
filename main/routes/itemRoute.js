@@ -10,11 +10,23 @@ const prisma = new PrismaClient();
 const router = Router();
 
 router.get("/items", async (req, res)=> {
-    try {
-        const items = await getItems();
+try {
+        const searchTerm = req.query.search || "";
+        const items = await prisma.item.findMany({
+            where: {
+                title: {
+                    contains: searchTerm,
+                },
+            },
+            include: {
+                photos: true,
+                seller: true,
+                admin: true,
+            },
+        });
         res.json(items);
     } catch (error) {
-        console.log("Error fetching items", error);
+        console.error("Error fetching items:", error);
         res.status(500).json({ error: "Failed to fetch items" });
     }
 });

@@ -144,5 +144,5 @@ async function getItems(){
     await prisma.$disconnect();
 }
 }
-addItems(itemsData);
+//addItems(itemsData);
 export default getItems;
